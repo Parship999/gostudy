@@ -28,5 +28,4 @@ func main() {
 }
 
 //if we use capital first letter then we can export it to use in another file
-// ";" will be automatically remove after save
 // if i use string or int, i have to strictly follow, but if only var then we can write anything 
