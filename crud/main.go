@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"strings"
 
 	//"io/ioutil"
 	"net/http"
@@ -15,8 +17,7 @@ type Todo struct {
 	Completed bool   `json:"completed"` //Field name in Go can be anything (Compl, Completed, etc.).JSON tag (json:"completed") controls mapping between JSON and struct field.
 }
 
-func main() {
-	fmt.Println("Hello World")
+func performGetRequest() {
 	res, err := http.Get("https://jsonplaceholder.typicode.com/todos/4")
 	if err != nil {
 		fmt.Println(err)
@@ -42,6 +43,46 @@ func main() {
 		return
 	}
 	fmt.Println("Todo: ", todo)
+}
+
+func performPostRequest() {
+	todo := Todo{
+		UserID:    23,
+		Title:     "New Todo",
+		Completed: true,
+	}
+
+	//convert todo struct to json //web request mein jab bhi data transfer karte hai to json mein hota hai
+	jsonData, err := json.Marshal(todo)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// convert json to string
+	jsonString := string(jsonData)
+
+	//convert string data to reader
+	jsonReader := strings.NewReader(jsonString)
+
+	myURL := "https://jsonplaceholder.typicode.com/todos"
+
+	//perform post request
+	res, err := http.Post(myURL, "application/json", jsonReader)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	defer res.Body.Close()
+	data, _ := ioutil.ReadAll(res.Body)
+	fmt.Println(string(data))
+}
+
+func main() {
+	fmt.Println("Hello World")
+	//performGetRequest()
+	performPostRequest()
 }
 
 /*
