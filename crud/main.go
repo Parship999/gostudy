@@ -79,10 +79,58 @@ func performPostRequest() {
 	fmt.Println(string(data))
 }
 
+func performUpdateRequest() {
+	todo := Todo{
+		UserID:    23,
+		Title:     "Updated Todo parship",
+		Completed: false,
+	}
+
+	//convert todo struct to json
+	jsonData, err := json.Marshal(todo)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	myURL := "https://jsonplaceholder.typicode.com/todos/1"
+
+	//convert json to string
+	jsonString := string(jsonData)
+	//convert string data to reader
+	jsonReader := strings.NewReader(jsonString)
+
+	//perform put request
+	req, err := http.NewRequest("PUT", myURL, jsonReader)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	//set headers
+	req.Header.Set("Content-Type", "application/json")
+
+	//perform request
+	client := http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer res.Body.Close()
+
+	data, _ := ioutil.ReadAll(res.Body)
+	fmt.Println(string(data))
+
+	//check status code
+	fmt.Println("Status code error: ", res.Status)
+}
+
 func main() {
 	fmt.Println("Hello World")
 	//performGetRequest()
-	performPostRequest()
+	//performPostRequest()
+	performUpdateRequest()
 }
 
 /*
@@ -111,5 +159,29 @@ Summary:
 The struct field name (Heading) is for your Go code.
 The JSON tag (json:"heading") must match the key in the JSON data for the field to be populated.
 If the JSON key does not match, the field will have its zero value (empty string for string).
+
+*/
+
+/*
+
+The line req.Header.Set("Content-Type", "application/json") is important because:
+
+It tells the server what type of data we're sending in the request body
+For REST APIs, application/json is the standard content type for JSON data
+Without this header, the server might not know how to parse the request body correctly
+Here's how it works in your code:
+
+// First you create JSON data
+jsonData, err := json.Marshal(todo)
+
+// Then when sending the request, you tell the server it's JSON
+req.Header.Set("Content-Type", "application/json")
+
+Think of it like putting a label on a package - the Content-Type header tells the server "this package contains JSON data, please handle it accordingly".
+If you didn't set this header:
+
+The server might reject the request
+The server might not parse the JSON data correctly
+The server might treat the data as plain text
 
 */
