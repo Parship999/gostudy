@@ -126,11 +126,35 @@ func performUpdateRequest() {
 	fmt.Println("Status code error: ", res.Status)
 }
 
+func performDeleteRequest() {
+	myURL := "https://jsonplaceholder.typicode.com/todos/1"
+
+	//perform delete request
+	req, err := http.NewRequest("DELETE", myURL, nil)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	//perform request
+	client := http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer res.Body.Close()
+
+	//check status code
+	fmt.Println("Status code error: ", res.Status)
+}
+
 func main() {
 	fmt.Println("Hello World")
 	//performGetRequest()
 	//performPostRequest()
-	performUpdateRequest()
+	//performUpdateRequest()
+	performDeleteRequest()
 }
 
 /*
